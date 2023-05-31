@@ -1,0 +1,35 @@
+{
+  "name": "l5-networks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --inspect --transpile-only src/infra/server.ts",
+    "test": "npx vitest",
+    "coverage": "npx vitest --coverage"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/typescript": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.59.8",
+    "@typescript-eslint/parser": "^5.59.8",
+    "@vitest/coverage-c8": "^0.31.2",
+    "editorconfig": "^1.0.2",
+    "eslint": "^8.41.0",
+    "prisma": "^4.15.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.0.4",
+    "vitest": "^0.31.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.1",
+    "express": "^4.18.2",
+    "pino": "^8.14.1",
+    "pino-pretty": "^10.0.0"
+  }
+}
