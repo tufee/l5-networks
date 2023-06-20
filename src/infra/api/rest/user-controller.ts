@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { CreateUserUseCase } from '../../../domain/usecases/create-user-usecase';
 import { DeleteUserUseCase } from '../../../domain/usecases/delete-user-usecase';
+import { FindGitHubUserUseCase } from '../../../domain/usecases/find-github-user-usecase';
 import { FindUserUseCase } from '../../../domain/usecases/find-user-usecase';
 
 export class UserController {
@@ -8,6 +9,7 @@ export class UserController {
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly deleteUserUseCase: DeleteUserUseCase,
     private readonly findUserUseCase: FindUserUseCase,
+    private readonly findGitHubUserUseCase: FindGitHubUserUseCase,
   ) { }
 
   async createUser(request: Request, response: Response) {
@@ -49,7 +51,19 @@ export class UserController {
     }
   }
 
+  async findGitHubUser(request: Request, response: Response) {
 
+    try {
+      const user = request.query.user as string;
+
+      console.log(user);
+      const gitHubUser = await this.findGitHubUserUseCase.execute(user);
+
+      return response.json(gitHubUser);
+    } catch (error: any) {
+      return response.status(400).json({ message: error.message });
+    }
+  }
 
 
 }

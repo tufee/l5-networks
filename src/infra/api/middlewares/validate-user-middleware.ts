@@ -42,4 +42,14 @@ export const validateQueryParamsUserEmail = (request: Request, response: Respons
   next();
 };
 
+export const validateGitHubUser = (request: Request, response: Response, next: NextFunction) => {
+  const user = request.query.user as string;
 
+  try {
+    validator.validateGitHubUser(user);
+  } catch (error: any) {
+    return response.status(400).json({ error: error.message });
+  }
+
+  next();
+};
