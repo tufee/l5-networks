@@ -22,12 +22,19 @@ export class UserRepository implements IUserRepository {
     return await prisma.user.create({
       data: {
         name: user.name,
-        login: user.login,
+        login: user.email,
         email: user.email,
         password: user.password
       }
     });
   }
 
+  async delete(email: string): Promise<void> {
+    await prisma.user.delete({
+      where: {
+        email
+      }
+    });
+  }
 
 }

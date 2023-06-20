@@ -3,4 +3,5 @@ import { ICreateUserData, IUserResponse } from '../../../domain/usecases/create-
 export interface IUserRepository {
   save(user: ICreateUserData): Promise<IUserResponse>;
   findByEmail(email: string): Promise<IUserResponse | null>;
+  delete(email: string): Promise<void>;
 }
