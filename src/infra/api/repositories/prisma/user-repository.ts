@@ -1,4 +1,4 @@
-import { ICreateUserData, IUserResponse } from '../../../../domain/usecases/create-user-dto';
+import { ICreateUserData, IUserResponse, IUserUpload } from '../../../../domain/usecases/create-user-dto';
 import { IUserRepository } from '../../../interfaces/repositories/user-repository';
 import { prisma } from './prisma-client';
 
@@ -37,4 +37,27 @@ export class UserRepository implements IUserRepository {
     });
   }
 
+  async upload(data: IUserUpload): Promise<void> {
+    await prisma.upload.create({
+      data: {
+        name: data.name,
+        size: data.size,
+        key: data.key,
+        path: data.path,
+        updatedAt: data.updatedAt,
+        userId: data.userId
+      }
+    });
+  }
+
+  async download(email: string): Promise<any> {
+    await prisma.user.findUnique({
+      where: {
+        email: email
+      },
+      include: {
+        uploads: true
+      }
+    });
+  }
 }
