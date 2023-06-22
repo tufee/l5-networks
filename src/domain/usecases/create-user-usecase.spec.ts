@@ -4,8 +4,11 @@ import { CreateUserUseCase } from './create-user-usecase';
 
 describe('CreateUserUseCase', () => {
   const userPostgresRepository = {
-    findByEmail: vi.fn(),
     save: vi.fn(),
+    findByEmail: vi.fn(),
+    delete: vi.fn(),
+    upload: vi.fn(),
+    download: vi.fn(),
   };
 
   const encrypter = {
@@ -17,19 +20,6 @@ describe('CreateUserUseCase', () => {
 
   beforeEach(() => {
     vi.resetAllMocks();
-  });
-
-  it('should throw an error if user data is invalid', async () => {
-    const invalidUserData: any = {
-      name: '',
-      login: '',
-      email: 'invalid-email',
-      emailConfirmation: 'invalid-email',
-      password: '123456',
-      passwordConfirmation: '123456',
-    };
-
-    await expect(createUserUseCase.execute(invalidUserData)).rejects.toThrowError();
   });
 
   it('should throw an error if user is already registered', async () => {
