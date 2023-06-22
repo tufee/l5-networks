@@ -1,4 +1,5 @@
 import { UserRepository } from '../../infra/api/repositories/prisma/user-repository';
+import * as validator from '../../infra/helper/validator';
 
 export class DeleteUserUseCase {
   constructor(
@@ -7,6 +8,7 @@ export class DeleteUserUseCase {
 
   async execute(email: string): Promise<void> {
 
+    validator.validateEmail(email);
     const isUser = await this.userPostgresRepository.findByEmail(email);
 
     if (!isUser) {
