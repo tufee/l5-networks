@@ -1,4 +1,4 @@
-import { IGitHubUser } from '../../domain/usecases/find-github-user-usecase';
+// import { IGitHubUser } from "../../domain/usecases/find-github-user-usecase";
 
 export const validateName = (name: string): boolean | Error => {
   if (!name) {
@@ -31,11 +31,11 @@ export const validateEmail = (email: string): boolean | Error => {
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  if (!emailRegex) {
+  if (!emailRegex.test(email)) {
     throw new Error('Email is invalid');
   }
 
-  return emailRegex.test(email);
+  return true;
 };
 
 export const validateEmailConfirmation = (email: string, emailConfirmation: string): boolean | Error => {
