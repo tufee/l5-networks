@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import multer from 'multer';
 import { multerConfig } from '../../helper/uploadFile';
-import { validateCreateUserData, validateGitHubUser, validateQueryParamsUserEmail, validateUserEmail } from '../middlewares/validate-user-middleware';
+import { validateCreateUserData, validateGitHubUser, validateQueryParamsUserEmail } from '../middlewares/validate-user-middleware';
 import { userController, userRepository } from './user-factory';
 
 const userRouter = Router();
@@ -10,7 +10,7 @@ userRouter.post('/createUser', validateCreateUserData, (request: Request, respon
   userController.createUser(request, response);
 });
 
-userRouter.post('/deleteUser', validateUserEmail, (request: Request, response: Response) => {
+userRouter.post('/deleteUser', (request: Request, response: Response) => {
   userController.deleteUser(request, response);
 });
 
