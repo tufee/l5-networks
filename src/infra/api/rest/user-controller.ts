@@ -16,11 +16,11 @@ export class UserController {
 
     try {
       const data = request.body;
-
       const user = await this.createUserUseCase.execute(data);
 
       return response.json(user);
     } catch (error: any) {
+      console.log(error);
       return response.status(400).json({ message: error.message });
     }
   }

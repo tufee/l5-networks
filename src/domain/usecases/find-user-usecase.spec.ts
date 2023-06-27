@@ -44,11 +44,22 @@ describe('FindUserUseCase', () => {
   });
 
   it('should return an error if user not found', async () => {
-    const email = 'johndoe@mail.com';
+    // Arrange
+    const email = 'johndoe@example.com';
 
-    expect(findUserUseCase.execute(email)).rejects.toThrowError('User not found');
+    // Act & Assert
+    expect(await findUserUseCase.execute(email)).rejects.toThrowError('User not found');
   });
 
+  it('should return an error if email is empty', async () => {
+    expect(await findUserUseCase.execute('')).rejects.toThrowError('Email is required');
+  });
+
+  it('should return an error if email not is valid', async () => {
+    const email = 'johndoe@@@mail.com';
+
+    expect(await findUserUseCase.execute(email)).rejects.toThrowError('Email is invalid');
+  });
 });
 
 

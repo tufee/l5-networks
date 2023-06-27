@@ -14,7 +14,7 @@ userRouter.post('/deleteUser', (request: Request, response: Response) => {
   userController.deleteUser(request, response);
 });
 
-userRouter.get('/findUser', validateQueryParamsUserEmail, (request: Request, response: Response) => {
+userRouter.get('/findUser', (request: Request, response: Response) => {
   userController.findUser(request, response);
 });
 

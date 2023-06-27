@@ -15,6 +15,17 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  uploads   Upload[]
 }
 
-
+model Upload {
+  id        String   @id @default(uuid())
+  name      String
+  size      Int
+  key       String   @unique
+  path      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  User      User     @relation(fields: [userId], references: [id])
+  userId    String
+}
