@@ -1,43 +1,32 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { prisma } from '../../infra/api/repositories/prisma/prisma-client';
-import { UserRepository } from '../../infra/api/repositories/prisma/user-repository';
-import { Encrypter } from '../../infra/helper/encrypter';
-import { CreateUserUseCase } from './create-user-usecase';
-import { DeleteUserUseCase } from './delete-user-usecase';
+import {afterEach, describe, expect, it, vi} from 'vitest';
+import {UserRepository} from '../../infra/api/repositories/prisma/user-repository';
+import {DeleteUserUseCase} from './delete-user-usecase';
+import * as validator from '../../infra/helper/validator';
 
 describe('DeleteUserUseCase', () => {
 
-  beforeEach(async () => {
-    await prisma.user.deleteMany();
-    await prisma.upload.deleteMany();
+  const userRepositoryMock: any = {
+    findByEmail: vi.fn(),
+    delete: vi.fn(),
+    save: vi.fn(),
+    upload: vi.fn(),
+    download: vi.fn(),
+  };
+
+  const deleteUserUseCase = new DeleteUserUseCase(userRepositoryMock);
+
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('should delete user', async () => {
-
+  it('should delete a user when valid email is provided', async () => {
     const email = 'johndoe@mail.com';
-    const userPostgresRepositoryStub = new UserRepository();
-    const encrypter = new Encrypter();
+    userRepositoryMock.findByEmail.mockReturnValue(true);
 
-    const createUserSut = new CreateUserUseCase(userPostgresRepositoryStub, encrypter);
+    await deleteUserUseCase.execute(email);
 
-    const sut = new DeleteUserUseCase(userPostgresRepositoryStub);
-    const deleteSpy = vi.spyOn(userPostgresRepositoryStub, 'delete');
-
-    const newUser: any = {
-      name: 'Jane Doe',
-      login: 'john',
-      email,
-      emailConfirmation: email,
-      password: 'abcdefgh',
-      passwordConfirmation: 'abcdefgh',
-    };
-
-    await createUserSut.execute(newUser);
-
-    await sut.execute(email);
-
-    expect(deleteSpy).toHaveBeenCalledOnce();
-    expect(deleteSpy).toHaveBeenCalledWith('johndoe@mail.com');
+    expect(userRepositoryMock.findByEmail).toHaveBeenCalledWith(email);
+    expect(userRepositoryMock.delete).toHaveBeenCalledWith(email);
   });
 
   it('should return an error if user not found', async () => {
@@ -46,6 +35,30 @@ describe('DeleteUserUseCase', () => {
     const sut = new DeleteUserUseCase(userPostgresRepositoryStub);
 
     expect(sut.execute(email)).rejects.toThrowError('User not found');
+  });
+
+  it('should throw an error when user does not exist', async () => {
+    const email = 'johndoe@mail.com';
+    userRepositoryMock.findByEmail.mockReturnValue(false);
+
+    await expect(deleteUserUseCase.execute(email)).rejects.toThrow(Error);
+
+    expect(userRepositoryMock.findByEmail).toHaveBeenCalledWith(email);
+    expect(userRepositoryMock.delete).not.toHaveBeenCalled();
+  });
+
+  it('should throw an error when email validation fails', async () => {
+    const email = 'invalid_email';
+    const validateEmailSpy = vi.spyOn(validator, 'validateEmail');
+    validateEmailSpy.mockImplementation(() => {
+      throw new Error('Invalid email');
+    });
+
+    await expect(deleteUserUseCase.execute(email)).rejects.toThrow(Error);
+
+    expect(validateEmailSpy).toHaveBeenCalledWith(email);
+    expect(userRepositoryMock.findByEmail).not.toHaveBeenCalled();
+    expect(userRepositoryMock.delete).not.toHaveBeenCalled();
   });
 
 });
