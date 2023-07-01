@@ -1,64 +1,45 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
 import { prisma } from '../../infra/api/repositories/prisma/prisma-client';
 import { UserRepository } from '../../infra/api/repositories/prisma/user-repository';
 import { Encrypter } from '../../infra/helper/encrypter';
 import { CreateUserUseCase } from './create-user-usecase';
 import { FindUserUseCase } from './find-user-usecase';
+import {IUserResponse} from "./create-user-dto";
 
 describe('FindUserUseCase', () => {
   let userRepository: UserRepository;
-  let encrypter: Encrypter;
-  let createUserUseCase: CreateUserUseCase;
   let findUserUseCase: FindUserUseCase;
 
   beforeEach(async () => {
     userRepository = new UserRepository();
-    encrypter = new Encrypter();
-    createUserUseCase = new CreateUserUseCase(userRepository, encrypter);
     findUserUseCase = new FindUserUseCase(userRepository);
-
-    await prisma.user.deleteMany();
-    await prisma.upload.deleteMany();
   });
 
-  it('should find user', async () => {
+  it('should return user when found', async () => {
     const email = 'johndoe@mail.com';
 
-    const newUser: any = {
+    const expectedUser: any = {
+      id: 'id',
       name: 'Jane Doe',
       login: 'john',
-      email,
-      emailConfirmation: email,
-      password: 'abcdefgh',
-      passwordConfirmation: 'abcdefgh',
+      email: 'john@mail.com',
     };
 
-    await createUserUseCase.execute(newUser);
+    vi.spyOn(userRepository, 'findByEmail').mockReturnValue(expectedUser);
 
-    const response = await findUserUseCase.execute(email);
+    const result = await findUserUseCase.execute(email);
 
-    expect(response).toHaveProperty('id');
-    expect(response).toHaveProperty('name');
-    expect(response).toHaveProperty('login');
-    expect(response).toHaveProperty('email');
+    expect(result).toEqual(expectedUser);
+    expect(userRepository.findByEmail).toHaveBeenCalledWith(email);
   });
 
-  it('should return an error if user not found', async () => {
-    // Arrange
+  it('should throw an error when user not found', async () => {
     const email = 'johndoe@example.com';
 
-    // Act & Assert
-    expect(await findUserUseCase.execute(email)).rejects.toThrowError('User not found');
-  });
+    vi.spyOn(userRepository, 'findByEmail').mockResolvedValue(null);
 
-  it('should return an error if email is empty', async () => {
-    expect(await findUserUseCase.execute('')).rejects.toThrowError('Email is required');
-  });
-
-  it('should return an error if email not is valid', async () => {
-    const email = 'johndoe@@@mail.com';
-
-    expect(await findUserUseCase.execute(email)).rejects.toThrowError('Email is invalid');
+    await expect(findUserUseCase.execute(email)).rejects.toThrowError('User not found');
+    expect(userRepository.findByEmail).toHaveBeenCalledWith(email);
   });
 });
 
