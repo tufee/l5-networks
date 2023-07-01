@@ -1,11 +1,11 @@
-import { UserRepository } from '../../infra/api/repositories/prisma/user-repository';
-import { Encrypter } from '../../infra/helper/encrypter';
-import { ICreateUserData, IUserResponse } from './create-user-dto';
+import {UserRepository} from '../../infra/api/repositories/prisma/user-repository';
+import {Encrypter} from '../../infra/helper/encrypter';
+import {ICreateUserData, IUserResponse} from './create-user-dto';
 
 export class CreateUserUseCase {
   constructor(
     private readonly userPostgresRepository: UserRepository,
-    private readonly encrypter: Encrypter
+    private readonly encrypt: Encrypter
   ) { }
 
   async execute(data: ICreateUserData): Promise<IUserResponse> {
@@ -16,13 +16,9 @@ export class CreateUserUseCase {
       throw new Error('User already registered');
     }
 
-    const hashedPassword = await this.encrypter.encrypt(data.password);
+    data.password = await this.encrypt.encrypt(data.password);
 
-    data.password = hashedPassword;
-
-    const user = await this.userPostgresRepository.save(data);
-
-    return user;
+    return await this.userPostgresRepository.save(data);
   }
 
 }
