@@ -1,11 +1,11 @@
-import { ICreateUserData, IUserResponse, IUserUpload } from '../../../../domain/usecases/create-user-dto';
-import { IUserRepository } from '../../../interfaces/repositories/user-repository';
-import { prisma } from './prisma-client';
+import {ICreateUserData, IUserResponse, IUserUpload} from '../../../../domain/usecases/create-user-dto';
+import {IUserRepository} from '../../../interfaces/repositories/user-repository';
+import {prisma} from './prisma-client';
 
 export class UserRepository implements IUserRepository {
 
   async findByEmail(email: string): Promise<IUserResponse | null> {
-    return await prisma.user.findUnique({
+    return prisma.user.findUnique({
       where: {
         email
       },
@@ -19,7 +19,7 @@ export class UserRepository implements IUserRepository {
   }
 
   async save(user: ICreateUserData): Promise<IUserResponse> {
-    return await prisma.user.create({
+    return prisma.user.create({
       data: {
         name: user.name,
         login: user.email,
