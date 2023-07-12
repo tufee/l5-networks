@@ -50,14 +50,14 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  async download(email: string): Promise<any> {
-    await prisma.user.findUnique({
+  async download(key: string): Promise<any> {
+    return prisma.upload.findUnique({
       where: {
-        email: email,
+        key: key,
       },
-      include: {
-        uploads: true,
-      },
+      select: {
+        path: true
+      }
     });
   }
 }

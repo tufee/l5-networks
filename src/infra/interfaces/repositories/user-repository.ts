@@ -5,5 +5,5 @@ export interface IUserRepository {
   findByEmail(email: string): Promise<IUserResponse | null>;
   delete(email: string): Promise<void>;
   upload(data: IUserUpload): Promise<void>;
-  download(email: string): Promise<any>;
+  download(email: string): Promise<string>;
 }

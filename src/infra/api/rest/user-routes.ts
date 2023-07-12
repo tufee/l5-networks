@@ -5,7 +5,7 @@ import {
   validateCreateUserData,
   validateUser,
 } from '../middlewares/validate-user-middleware';
-import { userController, userRepository } from './user-factory';
+import { userController } from './user-factory';
 
 const userRouter = Router();
 
@@ -29,20 +29,8 @@ userRouter.post('/upload', multer(multerConfig).single('file'), (request: Reques
   userController.upload(request, response);
 });
 
-userRouter.get('/download', async (request: Request, response: Response): Promise<any> => {
-
-  console.log(request.body);
-  const userData = await userRepository.findByEmail(request.body.email);
-  console.log(userData);
-
-  if (!userData) {
-    return response.status(400).json({ error: 'User not found' });
-  }
-
-  const file = await userRepository.download(userData.email);
-
-  console.log(file);
-  response.download(file.toString());
+userRouter.get('/download', (request: Request, response: Response) => {
+  userController.download(request, response);
 });
 
 export { userRouter };
