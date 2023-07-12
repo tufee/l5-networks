@@ -1,10 +1,6 @@
-import {beforeEach, describe, expect, it, vi} from 'vitest';
-import { prisma } from '../../infra/api/repositories/prisma/prisma-client';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { UserRepository } from '../../infra/api/repositories/prisma/user-repository';
-import { Encrypter } from '../../infra/helper/encrypter';
-import { CreateUserUseCase } from './create-user-usecase';
 import { FindUserUseCase } from './find-user-usecase';
-import {IUserResponse} from "./create-user-dto";
 
 describe('FindUserUseCase', () => {
   let userRepository: UserRepository;
