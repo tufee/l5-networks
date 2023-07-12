@@ -1,20 +1,20 @@
-import {ICreateUserData, IUserResponse, IUserUpload} from '../../../../domain/usecases/create-user-dto';
-import {IUserRepository} from '../../../interfaces/repositories/user-repository';
-import {prisma} from './prisma-client';
+import { ICreateUserData, IUserResponse, IUserUpload } from '../../../../domain/usecases/create-user-dto';
+import { IUserRepository } from '../../../interfaces/repositories/user-repository';
+import { prisma } from './prisma-client';
 
 export class UserRepository implements IUserRepository {
 
   async findByEmail(email: string): Promise<IUserResponse | null> {
     return prisma.user.findUnique({
       where: {
-        email
+        email,
       },
       select: {
         id: true,
         name: true,
         login: true,
         email: true,
-      }
+      },
     });
   }
 
@@ -24,16 +24,16 @@ export class UserRepository implements IUserRepository {
         name: user.name,
         login: user.email,
         email: user.email,
-        password: user.password
-      }
+        password: user.password,
+      },
     });
   }
 
   async delete(email: string): Promise<void> {
     await prisma.user.delete({
       where: {
-        email
-      }
+        email,
+      },
     });
   }
 
@@ -45,19 +45,19 @@ export class UserRepository implements IUserRepository {
         key: data.key,
         path: data.path,
         updatedAt: data.updatedAt,
-        userId: data.userId
-      }
+        userId: data.userId,
+      },
     });
   }
 
   async download(email: string): Promise<any> {
     await prisma.user.findUnique({
       where: {
-        email: email
+        email: email,
       },
       include: {
-        uploads: true
-      }
+        uploads: true,
+      },
     });
   }
 }
