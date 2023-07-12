@@ -25,12 +25,10 @@ describe('ValidateUserMiddleware', async () => {
       .post('/createUser')
       .send(data);
 
-    console.log(response);
     expect(response.status).toBe(200);
   });
 
   it('should return 400 error if any field fails validation', async () => {
-
     const data = {
       name: '',
       login: '',
