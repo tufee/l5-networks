@@ -1,5 +1,3 @@
-// import { IGitHubUser } from "../../domain/usecases/find-github-user-usecase";
-
 export const validateName = (name: string): boolean | Error => {
   if (!name) {
     throw new Error('Name is required');
@@ -70,7 +68,7 @@ export const validatePasswordConfirmation = (password: string, passwordConfirmat
   return true;
 };
 
-export const validateGitHubUser = (user: string): boolean | Error => {
+export const validateUser = (user: string): boolean | Error => {
   if (!user) {
     throw new Error('User is required');
   }
