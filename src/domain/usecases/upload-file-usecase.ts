@@ -1,20 +1,35 @@
-// import { UserRepository } from '../../infra/api/repositories/prisma/user-repository';
-// //import { uploadFile } from '../../infra/helper/uploadFile';
-// import { IUserResponse } from './create-user-dto';
-// import { Request, Response } from 'express';
+import { Request } from 'express';
+import { UserRepository } from '../../infra/api/repositories/prisma/user-repository';
+import * as validator from '../../infra/helper/validator';
 
-// export class UploadFileUseCase {
-//   constructor(
-//     private readonly userPostgresRepository: UserRepository,
-//   ) { }
+export class UploadFileUseCase {
+  constructor(
+    private readonly userPostgresRepository: UserRepository
+  ) { }
 
-//   async execute(request: Request, response: Response): Promise<any> {
+  async execute(request: Request): Promise<void> {
 
-//     const path = await uploadFile(request, response);
+    validator.validateEmail(request.body.email);
 
-//     await this.userPostgresRepository.upload(path);
+    const userData = await this.userPostgresRepository.findByEmail(request.body.email);
 
-//     return;
-//   }
+    if (!userData) {
+      throw new Error('User not found');
+    }
 
-// }
+    if (!request.file) {
+      throw new Error('File is required');
+    }
+
+    const uploadData = {
+      name: request.file.originalname,
+      size: request.file.size,
+      key: request.file.filename,
+      path: request.file.path,
+      updatedAt: new Date(),
+      userId: userData.id,
+    };
+
+    await this.userPostgresRepository.upload(uploadData);
+  }
+}

@@ -3,6 +3,7 @@ import { CreateUserUseCase } from '../../../domain/usecases/create-user-usecase'
 import { DeleteUserUseCase } from '../../../domain/usecases/delete-user-usecase';
 import { FindGitHubUserUseCase } from '../../../domain/usecases/find-github-user-usecase';
 import { FindUserUseCase } from '../../../domain/usecases/find-user-usecase';
+import { UploadFileUseCase } from '../../../domain/usecases/upload-file-usecase';
 
 export class UserController {
   constructor(
@@ -10,6 +11,7 @@ export class UserController {
     private readonly deleteUserUseCase: DeleteUserUseCase,
     private readonly findUserUseCase: FindUserUseCase,
     private readonly findGitHubUserUseCase: FindGitHubUserUseCase,
+    private readonly uploadFileUseCase: UploadFileUseCase,
   ) { }
 
   async createUser(request: Request, response: Response) {
@@ -56,7 +58,6 @@ export class UserController {
     try {
       const user = request.query.user as string;
 
-      console.log(user);
       const gitHubUser = await this.findGitHubUserUseCase.execute(user);
 
       return response.json(gitHubUser);
@@ -65,5 +66,14 @@ export class UserController {
     }
   }
 
+  async upload(request: Request, response: Response) {
 
+    try {
+      await this.uploadFileUseCase.execute(request);
+
+      response.json({ message: 'File uploaded successfully' });
+    } catch (error: any) {
+      return response.status(400).json({ message: error.message });
+    }
+  }
 }
