@@ -18,17 +18,6 @@ export const validateCreateUserData = (request: Request, response: Response, nex
   next();
 };
 
-export const validateQueryParamsUserEmail = (request: Request, response: Response, next: NextFunction) => {
-  const email = request.query.email as string;
-
-  try {
-    validator.validateEmail(email);
-  } catch (error: any) {
-    return response.status(400).json({ error: error.message });
-  }
-
-  next();
-};
 
 export const validateUser = (request: Request, response: Response, next: NextFunction) => {
   const user = request.query.user as string;
